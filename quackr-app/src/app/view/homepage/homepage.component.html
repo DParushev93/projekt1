@@ -1,0 +1,78 @@
+<app-header></app-header>
+<button type="button" class="cards btn btn-primary" data-toggle="modal" data-target="#modal">
+  Post your own event
+</button>
+
+<div *ngIf="events.length === 0" class="cards" style="font-size: 18pt">
+  Oops, it looks like there aren't any events for you to attend at the moment.
+  Check again later :)
+</div>
+
+<!-- Create Event Modal Form -->
+<div #modal class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Post your event</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="createEventForm" ngNativeValidate (ngSubmit)="createEvent()" class="form">
+          <div class="form-group">
+            <label class="text-secondary" for="inputTitle">Title</label>
+            <input type="text" maxlength="255" class="form-control" [(ngModel)]="event.title" name="inputTitle" id="inputTitle" placeholder="Title" required>
+          </div>
+          <div class="form-group">
+            <label class="text-secondary" for="inputDescription">Description</label>
+            <input type="text" maxlength="255" class="form-control" [(ngModel)]="event.description" name="inputDescription" id="inputDescription" placeholder="Description" required>
+          </div>
+          <div class="form-group">
+            <label class="text-secondary" for="inputLocation">Location</label>
+            <input type="text" maxlength="255" class="form-control" [(ngModel)]="event.location" name="inputLocation" id="inputLocation" placeholder="Location" required>
+          </div>
+          <div class="form-group">
+            <label class="text-secondary" for="inputDate">Date</label>
+            <input type="date" [min]="now()" class="form-control" [(ngModel)]="event.date" name="inputDate" id="inputDate" placeholder="Date" required>
+          </div>
+          <div class="form-group">
+            <label class="text-secondary" for="inputAttendeeLimit">Attendee limit</label>
+            <input type="number" min="4" max="50" class="form-control" [(ngModel)]="event.attendeeLimit" name="inputAttendeeLimit" id="inputAttendeeLimit" placeholder="Attendee limit" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary text-light" data-dismiss="modal">Cancel</button>
+        <button type="submit" form="createEventForm" class="btn btn-success text-light">Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cards" *ngFor="let event of events">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title text-secondary"><b>{{event.title}}</b></h5>
+      <div class="col-6" style="float: left">
+        <p class="card-text text-info">{{event.description}}</p>
+        <p class="card-text text-success"><b>Who's going:</b></p>
+        <div *ngFor="let attendee of event.attendees">
+          <p class="card-text text-success">{{attendee.username}}</p>
+        </div>
+      </div>
+      <div class="col-6" style="float:right;">
+        <p class="card-text text-success">Organizer: <b>{{getUserWithId(event.organizerId).username}}</b></p>
+        <p class="card-text text-success">Location: <b>{{event.location}}</b></p>
+        <p class="card-text text-success">Date: <b>{{event.date}}</b></p>
+        <p class="card-text text-success">Attendance: <b>{{event.attendees.length}} / {{event.attendeeLimit}}</b></p>
+        <button *ngIf="!checkIsAttending(event, getUserWithId(userId))" (click)="attendEvent(userId, event.id)"
+                [disabled]="event.attendees.length === event.attendeeLimit || isPastDate(event.date)" class="btn btn-success text-light">Attend</button>
+        <button *ngIf="checkIsAttending(event, getUserWithId(userId))" (click)="unattendEvent(userId, event.id)" class="btn btn-secondary text-light">Unattend</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height: 70px;"></div>
+<app-footer></app-footer>

@@ -1,0 +1,30 @@
+<app-header></app-header>
+<title>Visiting Events</title>
+<div *ngIf="events.length === 0" class="cards" style="font-size: 18pt">
+  Oops, it looks like you aren't visiting any events at the moment.
+  Go find some on the homepage :)
+</div>
+
+<h3><div class="cards text-success" *ngIf="events.length > 0" style="font-size: 16pt; margin-bottom: 50px">
+  Events you're going to:
+</div></h3>
+<div class="cards" *ngFor="let event of events">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title text-secondary"><b>{{event.title}}</b></h5>
+      <div class="col-6" style="float: left">
+        <p class="card-text text-info">{{event.description}}</p>
+      </div>
+      <div class="col-6" style="float:right;">
+        <p class="card-text text-success">Organizer: <b>{{getUserWithId(event.organizerId).username}}</b></p>
+        <p class="card-text text-success">Location: <b>{{event.location}}</b></p>
+        <p class="card-text text-success">Date: <b>{{event.date}}</b></p>
+        <p class="card-text text-success">Attendance: <b>{{event.attendees.length}} / {{event.attendeeLimit}}</b></p>
+        <button (click)="unattendEvent(userId, event.id)" class="btn btn-secondary text-light">Unattend</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height: 70px;"></div>
+<app-footer></app-footer>
